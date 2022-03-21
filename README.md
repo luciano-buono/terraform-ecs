@@ -252,3 +252,54 @@ Kubernetes and Mesos act like a big cluster where they encourage you to deploy a
 ### ECS detect deployments failure
 
 When deploying manually we can see if the new container has started or is stuck in a start/stop loop. But when deploying automatically this is not visible. To make sure we get alerted when containers start failing we need to watch for events from ECS who state that a container has STOPPED. This can be done by using the module [ecs_events](modules/ecs_events/main.tf). The only thing that is missing from the module is the actual alert. This is because terraform can't handle email and all other protocols for *aws_sns_topic_subscription* are specific per customer.
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14.9 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 3.27 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 3.27 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_ecs"></a> [ecs](#module\_ecs) | ./modules/ecs | n/a |
+| <a name="module_ecs_service_ReverseProxy"></a> [ecs\_service\_ReverseProxy](#module\_ecs\_service\_ReverseProxy) | ./modules/ecs_WithVolume | n/a |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [aws_key_pair.ecs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/key_pair) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_availability_zones"></a> [availability\_zones](#input\_availability\_zones) | The AWS availability zones to create subnets in. | `list` | n/a | yes |
+| <a name="input_aws_ecs_ami"></a> [aws\_ecs\_ami](#input\_aws\_ecs\_ami) | The AMI to seed ECS instances with. | `any` | n/a | yes |
+| <a name="input_aws_profile"></a> [aws\_profile](#input\_aws\_profile) | The AWS-CLI profile for the account to create resources in. | `any` | n/a | yes |
+| <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | The AWS region to create resources in. | `any` | n/a | yes |
+| <a name="input_desired_capacity"></a> [desired\_capacity](#input\_desired\_capacity) | Ideal number of instances in the ECS cluster. | `any` | n/a | yes |
+| <a name="input_ecs"></a> [ecs](#input\_ecs) | The values of each ECS service and task | <pre>list(object({<br>    hostPort = string<br>    containerPort = string<br>    vpc_id = string<br>    project = string<br>    healthCheck_path = string<br>    cluster_arn = string<br>    service_desidedCount = number<br>    memoryReservation = number<br>    image = string<br>    imageVersion = string<br>    execution_role_arn = string<br>    alb_arn = string<br>    containerVolumePath = string<br>  })<br>  )</pre> | <pre>[<br>  {<br>    "alb_arn": "arn:aws:elasticloadbalancing:us-east-1:152835622754:loadbalancer/app/terraTuto-terraTuto/b8ae32e752322e67",<br>    "cluster_arn": "arn:aws:ecs:us-east-1:152835622754:cluster/terraTuto",<br>    "containerPort": "1",<br>    "containerVolumePath": "/",<br>    "execution_role_arn": "arn:aws:iam::152835622754:role/ecsTaskExecutionRole",<br>    "healthCheck_path": "",<br>    "hostPort": "1",<br>    "image": "",<br>    "imageVersion": "latest",<br>    "memoryReservation": 100,<br>    "project": "",<br>    "service_desidedCount": 1,<br>    "vpc_id": "vpc-013f23be651430cb0"<br>  }<br>]</pre> | no |
+| <a name="input_environment"></a> [environment](#input\_environment) | A name to describe the environment we're creating. | `any` | n/a | yes |
+| <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | Size of instances in the ECS cluster. | `any` | n/a | yes |
+| <a name="input_max_size"></a> [max\_size](#input\_max\_size) | Maximum number of instances in the ECS cluster. | `any` | n/a | yes |
+| <a name="input_min_size"></a> [min\_size](#input\_min\_size) | Minimum number of instances in the ECS cluster. | `any` | n/a | yes |
+| <a name="input_private_subnet_cidrs"></a> [private\_subnet\_cidrs](#input\_private\_subnet\_cidrs) | The IP ranges to use for the private subnets in your VPC. | `list` | n/a | yes |
+| <a name="input_public_subnet_cidrs"></a> [public\_subnet\_cidrs](#input\_public\_subnet\_cidrs) | The IP ranges to use for the public subnets in your VPC. | `list` | n/a | yes |
+| <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | The IP range to attribute to the virtual network. | `any` | n/a | yes |
+| <a name="input_workspace_iam_roles"></a> [workspace\_iam\_roles](#input\_workspace\_iam\_roles) | n/a | `map` | <pre>{<br>  "dev": "arn:aws:iam::152835622754:role/OrganizationAccountAccessRole",<br>  "prod": "arn:aws:iam::348847601284:role/Terraform-FullAccess"<br>}</pre> | no |
+
+## Outputs
+
+No outputs.
+<!-- END_TF_DOCS -->
